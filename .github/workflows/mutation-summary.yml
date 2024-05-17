@@ -29,10 +29,5 @@ jobs:
 
       - name: Parse PITest XML and Generate Summary
         id: parse_summary
-        run: echo "::set-output name=summary::$(node .github/workflows/parse-pitest-summary.js)"
         shell: bash
-
-
-      - name: Upload mutation test summary
-        run: echo "${{ steps.parse_summary.outputs.summary }}" >> $GITHUB_STEP_SUMMARY
-
+        run: echo $(node .github/workflows/parse-pitest-summary.js) >> $GITHUB_STEP_SUMMARY
