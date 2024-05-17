@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm") version "1.9.24"
+    id("info.solidsoft.pitest") version "1.15.0"
 }
 
 repositories {
@@ -15,4 +16,12 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+pitest {
+    targetClasses = listOf("com.yonatankarp.*")
+    threads = 2 * Runtime.getRuntime().availableProcessors()
+    junit5PluginVersion = "1.2.1"
+    outputFormats = listOf("XML", "HTML")
+    timestampedReports = false
 }
