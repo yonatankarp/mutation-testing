@@ -2,8 +2,10 @@ const fs = require('fs');
 const xml2js = require('xml2js');
 const core = require('@actions/core');
 
+const filePath = 'build/reports/pitest/mutations.xml'; // Updated file path
+
 const parser = new xml2js.Parser();
-fs.readFile('build/reports/pitest/mutations.xml', (err, data) => {
+fs.readFile(filePath, (err, data) => {
     if (err) {
         core.setFailed('Error reading XML file: ' + err.message);
         return;
@@ -16,18 +18,28 @@ fs.readFile('build/reports/pitest/mutations.xml', (err, data) => {
         }
 
         const mutations = result.mutations.mutation;
-        const summaryLines = mutations.map(mutation => {
+        const fileGroups = mutations.reduce((acc, mutation) => {
             const file = mutation.sourceFile[0];
+            if (!acc[file]) acc[file] = [];
             const method = mutation.mutatedMethod[0];
             const lineNumber = mutation.lineNumber[0];
-            const detected = mutation.$.detected === 'true' ? '✅ Detected' : '❌ Not Detected';
-            const status = mutation.$.status === 'KILLED' ? '💀 Killed' : '🚶 Survived';
+            const detected = mutation.$.detected === 'true' ? '✅' : '❌';
+            const status = mutation.$.status === 'KILLED' ? '💀' : '🚶';
             const description = mutation.description[0];
 
-            return `### Mutation in ${file} (Line: ${lineNumber})\n- **Method**: \`${method}\`\n- **Status**: ${status}\n- **Detection**: ${detected}\n- **Description**: ${description}`;
-        });
+            acc[file].push(`${detected} \`${method}\` (Line ${lineNumber}) - ${description} ${status}`);
+            return acc;
+        }, {});
 
-        const reportContent = `# Mutation Test Summary\n## Overview\nThis report provides an overview of mutation testing results, indicating how mutations were handled by the test suite. Each entry details a mutation attempt, its detection status, and the specific mutation description.\n\n${summaryLines.join('\n\n')}`;
+        let reportContent = "# Mutation Test Summary\n## Overview\nThis report provides an overview of mutation testing results, grouped by file. Each entry details a mutation attempt, its detection status, and specific mutation description.\n\n";
+
+        Object.entries(fileGroups).forEach(([file, mutations]) => {
+            reportContent += `### Mutations in ${file}\n`;
+            mutations.forEach(mutation => {
+                reportContent += `- ${mutation}\n`;
+            });
+            reportContent += '\n';
+        });
 
         // Write directly to the GitHub Step Summary using @actions/core
         core.summary.addRaw(reportContent).write();
