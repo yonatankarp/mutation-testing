@@ -3,7 +3,7 @@ const xml2js = require('xml2js');
 const core = require('@actions/core');
 
 const parser = new xml2js.Parser();
-fs.readFile('pitest-report.xml', (err, data) => {
+fs.readFile('build/reports/pitest/mutations.xml', (err, data) => {
     if (err) {
         core.setFailed('Error reading XML file: ' + err.message);
         return;
