@@ -1,0 +1,32 @@
+name: Mutation Test Summary
+
+on: [ workflow_dispatch ]
+
+jobs:
+  mutation-summary:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: 21
+          distribution: 'temurin'
+          # Instead of manually configure caching of gradle, use an action which
+          # is provided. Details here: https://github.com/actions/setup-java
+          cache: gradle
+
+      - name: Run mutation tests
+        run: ./gradlew pitest
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+
+      - name: Install dependencies
+        run: npm install @actions/core xml2js
+
+      - name: Parse PITest XML and Generate Summary
+        run: node .github/workflows/parse-pitest-summary.js
+
