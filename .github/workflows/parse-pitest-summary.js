@@ -31,7 +31,13 @@ fs.readFile(filePath, (err, data) => {
             return acc;
         }, {});
 
-        let reportContent = "# Mutation Test Summary\n## Overview\nThis report provides an overview of mutation testing results, grouped by file. Each entry details a mutation attempt, its detection status, and specific mutation description.\n\n";
+        let reportContent = `# Mutation Test Summary
+        
+## Overview
+
+This report provides an overview of mutation testing results, grouped by file. Each entry details a mutation attempt, its detection status, and specific mutation description.
+
+`;
 
         Object.entries(fileGroups).forEach(([file, mutations]) => {
             reportContent += `### Mutations in ${file}\n`;
