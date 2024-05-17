@@ -34,5 +34,5 @@ jobs:
 
 
       - name: Upload mutation test summary
-        run: echo "${{ steps.parse_summary.outputs.summary }}" >> >> $GITHUB_STEP_SUMMARY
+        run: echo "${{ steps.parse_summary.outputs.summary }}" >> $GITHUB_STEP_SUMMARY
 
