@@ -1,17 +1,18 @@
 const fs = require('fs');
 const xml2js = require('xml2js');
+const summaryPath = process.env.GITHUB_STEP_SUMMARY; // Access the GitHub environment variable
 
 const parser = new xml2js.Parser();
-fs.readFile('build/reports/pitest/mutations.xml', (err, data) => { // TODO: pass file path as argument
+fs.readFile('pitest-report.xml', (err, data) => {
     if (err) {
         console.error('Error reading XML file:', err);
-        process.exit(1);
+        return;
     }
 
     parser.parseString(data, (err, result) => {
         if (err) {
             console.error('Error parsing XML:', err);
-            process.exit(1);
+            return;
         }
 
         const mutations = result.mutations.mutation;
@@ -36,6 +37,7 @@ This report provides an overview of mutation testing results, indicating how mut
 
 ${summaryLines.join('\n')}`;
 
-        console.log(reportContent); // Output to stdout to capture in GitHub Actions
+        // Write directly to the GitHub Step Summary file
+        fs.appendFileSync(summaryPath, reportContent + '\n');
     });
 });

@@ -28,6 +28,6 @@ jobs:
         run: npm install xml2js
 
       - name: Parse PITest XML and Generate Summary
-        id: parse_summary
-        shell: bash
-        run: echo $(node .github/workflows/parse-pitest-summary.js) >> $GITHUB_STEP_SUMMARY
+        run: node parse-pitest-summary.js
+        env:
+          GITHUB_STEP_SUMMARY: ${{ github.step_summary }}
