@@ -1,33 +1,29 @@
 package com.yonatankarp.mutation.testing
 
+import com.yonatankarp.mutation.testing.PrimeCalculator.isPrime
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 
 class PrimeCalculatorTest {
-    @Test
-    fun `test is prime`() {
-        assertFalse(PrimeCalculator.isPrime(1))
-        assertTrue(PrimeCalculator.isPrime(2))
-        assertTrue(PrimeCalculator.isPrime(3))
-        assertFalse(PrimeCalculator.isPrime(4))
-        assertTrue(PrimeCalculator.isPrime(5))
+    @ParameterizedTest(name = "isPrime({0}) = {1}")
+    @MethodSource("provideNumbers")
+    fun `test isPrime`(number: Int, isPrime: Boolean) {
+        assertEquals(isPrime, number.isPrime())
     }
 
-    @Test
-    fun `test generate primes`() {
-        assertEquals(listOf(2, 3, 5), PrimeCalculator.generatePrimes(5))
-        assertEquals(listOf(2, 3, 5, 7), PrimeCalculator.generatePrimes(10))
-    }
-
-    @Test
-    fun `test factorial`() {
-        assertEquals(1L, PrimeCalculator.factorial(0))
-        assertEquals(120L, PrimeCalculator.factorial(5))
-        assertThrows(IllegalArgumentException::class.java) {
-            PrimeCalculator.factorial(-1)
-        }
+    companion object {
+        @JvmStatic
+        fun provideNumbers() = listOf(
+            Arguments.of(Int.MIN_VALUE, false),
+            Arguments.of(-1, false),
+            Arguments.of(0, false),
+            Arguments.of(1, false),
+            Arguments.of(2, true),
+            Arguments.of(3, true),
+            Arguments.of(4, false),
+            Arguments.of(5, true),
+        )
     }
 }
