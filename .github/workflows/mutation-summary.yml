@@ -23,6 +23,8 @@ jobs:
 
       - name: Parse PITest XML and Generate Summary
         uses: yonatankarp/pitest-summary@main
+        with:
+          file-path: build/reports/pitest/mutations.xml
 
 #      - name: Set up Node.js
 #        uses: actions/setup-node@v4
