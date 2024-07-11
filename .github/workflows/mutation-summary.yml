@@ -25,13 +25,3 @@ jobs:
         uses: yonatankarp/pitest-summary@main
         with:
           file-path: build/reports/pitest/mutations.xml
-
-#      - name: Set up Node.js
-#        uses: actions/setup-node@v4
-#
-#      - name: Install dependencies
-#        run: npm install @actions/core xml2js
-#
-#      - name: Parse PITest XML and Generate Summary
-#        run: node .github/workflows/parse-pitest-summary.js
-
